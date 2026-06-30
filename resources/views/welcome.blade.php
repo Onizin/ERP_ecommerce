@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{{-- <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
@@ -168,5 +168,842 @@
                 </div>
             </div>
         </div>
+    </body>
+</html> --}}
+
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>{{ config('app.name', 'ERP Penjualan') }} — Kelola penjualan, pelanggan, dan stok dalam satu tempat</title>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800|inter:400,500,600&display=swap" rel="stylesheet" />
+
+        <!-- Styles -->
+        <style>
+            :root {
+                --ink: #14161F;
+                --ink-soft: #4B4F5E;
+                --ink-faint: #8A8D9B;
+                --paper: #FBFBFA;
+                --card: #FFFFFF;
+                --line: #E7E7E4;
+                --brand: #3B4CE0;
+                --brand-dark: #2C39B8;
+                --brand-soft: #ECEEFD;
+                --accent: #14B881;
+                --accent-soft: #E4F8F0;
+                --shadow-card: 0 1px 2px rgba(20,22,31,0.04), 0 12px 28px -14px rgba(20,22,31,0.12);
+            }
+
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+
+            html { scroll-behavior: smooth; }
+
+            body {
+                font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+                background: var(--paper);
+                color: var(--ink);
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                line-height: 1.5;
+            }
+
+            h1, h2, h3 {
+                font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+                font-weight: 700;
+                letter-spacing: -0.02em;
+                color: var(--ink);
+            }
+
+            a { color: inherit; text-decoration: none; }
+            img { max-width: 100%; display: block; }
+
+            .wrap {
+                max-width: 1180px;
+                margin: 0 auto;
+                padding: 0 24px;
+            }
+
+            /* ---------- Nav ---------- */
+            .nav {
+                position: sticky;
+                top: 0;
+                z-index: 40;
+                background: rgba(251,251,250,0.86);
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid var(--line);
+            }
+            .nav-inner {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 16px 24px;
+                max-width: 1180px;
+                margin: 0 auto;
+            }
+            .brand-mark {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-weight: 800;
+                font-size: 18px;
+                font-family: 'Plus Jakarta Sans', sans-serif;
+            }
+            .brand-mark .dot {
+                width: 30px;
+                height: 30px;
+                border-radius: 9px;
+                background: linear-gradient(155deg, var(--brand), var(--brand-dark));
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                font-size: 14px;
+                font-weight: 800;
+            }
+            .nav-links {
+                display: flex;
+                align-items: center;
+                gap: 32px;
+            }
+            .nav-links a:not(.btn) {
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--ink-soft);
+                transition: color .15s ease;
+            }
+            .nav-links a:not(.btn):hover { color: var(--ink); }
+            .nav-cta { display: flex; align-items: center; gap: 10px; }
+
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-size: 14px;
+                font-weight: 600;
+                padding: 10px 18px;
+                border-radius: 10px;
+                transition: all .15s ease;
+                white-space: nowrap;
+            }
+            .btn-primary {
+                background: var(--ink);
+                color: #fff;
+            }
+            .btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); }
+            .btn-ghost {
+                color: var(--ink-soft);
+            }
+            .btn-ghost:hover { color: var(--ink); }
+            .btn-outline {
+                border: 1px solid var(--line);
+                color: var(--ink);
+                background: #fff;
+            }
+            .btn-outline:hover { border-color: var(--ink); }
+
+            @media (max-width: 860px) {
+                .nav-links a:not(.btn) { display: none; }
+            }
+
+            /* ---------- Hero ---------- */
+            .hero {
+                padding: 88px 0 64px;
+                position: relative;
+                overflow: hidden;
+            }
+            .hero-glow {
+                position: absolute;
+                top: -180px;
+                right: -160px;
+                width: 560px;
+                height: 560px;
+                border-radius: 50%;
+                background: radial-gradient(circle, rgba(59,76,224,0.14), transparent 70%);
+                pointer-events: none;
+            }
+            .eyebrow {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--brand-dark);
+                background: var(--brand-soft);
+                padding: 7px 14px;
+                border-radius: 100px;
+                margin-bottom: 22px;
+            }
+            .eyebrow .ping {
+                width: 6px; height: 6px; border-radius: 50%;
+                background: var(--accent);
+            }
+            .hero h1 {
+                font-size: clamp(32px, 5.2vw, 56px);
+                line-height: 1.06;
+                max-width: 760px;
+            }
+            .hero h1 em {
+                font-style: normal;
+                background: linear-gradient(180deg, transparent 62%, var(--brand-soft) 62%);
+            }
+            .hero p.lead {
+                margin-top: 22px;
+                font-size: 18px;
+                color: var(--ink-soft);
+                max-width: 560px;
+                line-height: 1.6;
+            }
+            .hero-actions {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                margin-top: 32px;
+                flex-wrap: wrap;
+            }
+            .hero-note {
+                margin-top: 16px;
+                font-size: 13px;
+                color: var(--ink-faint);
+            }
+
+            /* ---------- Hero visual: product preview card ---------- */
+            .hero-visual {
+                margin-top: 64px;
+                border-radius: 20px;
+                border: 1px solid var(--line);
+                background: var(--card);
+                box-shadow: var(--shadow-card);
+                overflow: hidden;
+            }
+            .hero-visual-bar {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 14px 18px;
+                border-bottom: 1px solid var(--line);
+                background: #FAFAF9;
+            }
+            .hero-visual-bar span {
+                width: 10px; height: 10px; border-radius: 50%;
+                background: var(--line);
+            }
+            .hero-visual-body {
+                display: grid;
+                grid-template-columns: 220px 1fr;
+                min-height: 320px;
+            }
+            .hv-sidebar {
+                border-right: 1px solid var(--line);
+                padding: 20px 16px;
+                background: #FCFCFB;
+            }
+            .hv-sidebar .item {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-size: 13px;
+                font-weight: 500;
+                color: var(--ink-soft);
+                padding: 9px 10px;
+                border-radius: 8px;
+                margin-bottom: 2px;
+            }
+            .hv-sidebar .item.active {
+                background: var(--brand-soft);
+                color: var(--brand-dark);
+            }
+            .hv-sidebar .item .ic {
+                width: 16px; height: 16px; border-radius: 4px;
+                background: currentColor; opacity: .35;
+            }
+            .hv-main { padding: 22px 24px; }
+            .hv-row {
+                display: flex; align-items: center; justify-content: space-between;
+                margin-bottom: 18px;
+            }
+            .hv-row h3 { font-size: 15px; }
+            .hv-pill {
+                font-size: 12px; font-weight: 600;
+                padding: 4px 10px; border-radius: 100px;
+                background: var(--accent-soft); color: #0E8F62;
+            }
+            .hv-card {
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                padding: 14px 16px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 10px;
+            }
+            .hv-card .who {
+                display: flex; align-items: center; gap: 10px;
+                font-size: 13px; font-weight: 600;
+            }
+            .hv-avatar {
+                width: 30px; height: 30px; border-radius: 50%;
+                background: linear-gradient(155deg, var(--brand), var(--accent));
+            }
+            .hv-amt { font-size: 13px; font-weight: 700; color: var(--ink); }
+            .hv-status { font-size: 11px; color: var(--ink-faint); margin-top: 2px; }
+
+            /* ---------- Logos / trust strip ---------- */
+            .trust {
+                padding: 36px 0;
+                border-top: 1px solid var(--line);
+                border-bottom: 1px solid var(--line);
+            }
+            .trust p {
+                text-align: center;
+                font-size: 12px;
+                font-weight: 600;
+                letter-spacing: .06em;
+                text-transform: uppercase;
+                color: var(--ink-faint);
+                margin-bottom: 24px;
+            }
+            .trust-grid {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 56px;
+                flex-wrap: wrap;
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                font-weight: 700;
+                font-size: 18px;
+                color: var(--ink-faint);
+                opacity: .7;
+            }
+
+            /* ---------- Section heading ---------- */
+            .section { padding: 88px 0; }
+            .section-head {
+                max-width: 600px;
+                margin-bottom: 52px;
+            }
+            .section-head .tag {
+                font-size: 13px;
+                font-weight: 700;
+                color: var(--brand-dark);
+                text-transform: uppercase;
+                letter-spacing: .05em;
+                margin-bottom: 12px;
+                display: block;
+            }
+            .section-head h2 {
+                font-size: clamp(26px, 3.4vw, 36px);
+                line-height: 1.15;
+            }
+            .section-head p {
+                margin-top: 14px;
+                font-size: 16px;
+                color: var(--ink-soft);
+                line-height: 1.6;
+            }
+
+            /* ---------- Feature grid ---------- */
+            .feature-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1px;
+                background: var(--line);
+                border: 1px solid var(--line);
+                border-radius: 16px;
+                overflow: hidden;
+            }
+            .feature {
+                background: var(--card);
+                padding: 32px 28px;
+                transition: background .15s ease;
+            }
+            .feature:hover { background: #FAFAFF; }
+            .feature-icon {
+                width: 40px; height: 40px;
+                border-radius: 10px;
+                display: flex; align-items: center; justify-content: center;
+                margin-bottom: 18px;
+                background: var(--brand-soft);
+                color: var(--brand-dark);
+            }
+            .feature-icon svg { width: 20px; height: 20px; }
+            .feature h3 {
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
+            .feature p {
+                font-size: 14px;
+                color: var(--ink-soft);
+                line-height: 1.6;
+            }
+
+            @media (max-width: 860px) {
+                .feature-grid { grid-template-columns: 1fr; }
+            }
+
+            /* ---------- Stats ---------- */
+            .stats {
+                background: var(--ink);
+                border-radius: 24px;
+                padding: 56px 40px;
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 32px;
+            }
+            .stat .num {
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                font-size: clamp(28px, 4vw, 40px);
+                font-weight: 800;
+                color: #fff;
+            }
+            .stat .label {
+                margin-top: 6px;
+                font-size: 13px;
+                color: rgba(255,255,255,0.55);
+            }
+            @media (max-width: 760px) {
+                .stats { grid-template-columns: repeat(2, 1fr); }
+            }
+
+            /* ---------- Workflow strip ---------- */
+            .flow-strip {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 20px;
+            }
+            .flow-step {
+                position: relative;
+                padding: 24px 22px;
+                border: 1px solid var(--line);
+                border-radius: 14px;
+                background: var(--card);
+            }
+            .flow-step .n {
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                font-size: 13px;
+                font-weight: 700;
+                color: var(--brand);
+                margin-bottom: 10px;
+            }
+            .flow-step h4 { font-size: 15px; margin-bottom: 6px; }
+            .flow-step p { font-size: 13px; color: var(--ink-soft); line-height: 1.55; }
+            .flow-arrow {
+                position: absolute;
+                right: -28px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--ink-faint);
+                font-size: 16px;
+            }
+            @media (max-width: 900px) {
+                .flow-strip { grid-template-columns: 1fr; }
+                .flow-arrow { display: none; }
+            }
+
+            /* ---------- Testimonial ---------- */
+            .testimonial {
+                background: var(--brand-soft);
+                border-radius: 24px;
+                padding: 56px;
+                display: grid;
+                grid-template-columns: 1fr auto;
+                align-items: center;
+                gap: 40px;
+            }
+            .testimonial blockquote {
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                font-size: clamp(20px, 2.6vw, 26px);
+                font-weight: 600;
+                line-height: 1.4;
+                color: var(--ink);
+            }
+            .testimonial cite {
+                display: block;
+                font-style: normal;
+                font-size: 14px;
+                color: var(--ink-soft);
+                margin-top: 20px;
+            }
+            .testimonial cite b { color: var(--ink); }
+            @media (max-width: 760px) {
+                .testimonial { grid-template-columns: 1fr; padding: 36px 28px; }
+            }
+
+            /* ---------- CTA banner ---------- */
+            .cta-banner {
+                text-align: center;
+                padding: 80px 24px;
+                border-radius: 24px;
+                background: linear-gradient(155deg, #1B1D2B, #14161F);
+                color: #fff;
+            }
+            .cta-banner h2 { color: #fff; font-size: clamp(26px, 3.6vw, 38px); }
+            .cta-banner p {
+                margin-top: 14px;
+                color: rgba(255,255,255,0.6);
+                font-size: 16px;
+            }
+            .cta-banner .hero-actions { justify-content: center; margin-top: 30px; }
+            .cta-banner .btn-primary { background: #fff; color: var(--ink); }
+            .cta-banner .btn-primary:hover { background: var(--brand-soft); transform: translateY(-1px); }
+            .cta-banner .btn-outline { background: transparent; border-color: rgba(255,255,255,0.18); color: #fff; }
+            .cta-banner .btn-outline:hover { border-color: #fff; }
+
+            /* ---------- Footer ---------- */
+            footer {
+                border-top: 1px solid var(--line);
+                padding: 56px 0 32px;
+            }
+            .footer-grid {
+                display: grid;
+                grid-template-columns: 1.4fr repeat(3, 1fr);
+                gap: 32px;
+                padding-bottom: 40px;
+            }
+            .footer-col h5 {
+                font-size: 13px;
+                font-weight: 700;
+                margin-bottom: 14px;
+                color: var(--ink);
+            }
+            .footer-col a {
+                display: block;
+                font-size: 14px;
+                color: var(--ink-soft);
+                margin-bottom: 10px;
+            }
+            .footer-col a:hover { color: var(--ink); }
+            .footer-bottom {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding-top: 24px;
+                border-top: 1px solid var(--line);
+                font-size: 13px;
+                color: var(--ink-faint);
+            }
+            @media (max-width: 760px) {
+                .footer-grid { grid-template-columns: 1fr 1fr; }
+            }
+        </style>
+    </head>
+    <body>
+
+        <!-- ===== Nav ===== -->
+        <header class="nav">
+            <div class="nav-inner">
+                <div class="brand-mark">
+                    <span class="dot">S</span>
+                    Salesflow
+                </div>
+
+                <nav class="nav-links">
+                    <a href="#fitur">Fitur</a>
+                    <a href="#alur">Alur kerja</a>
+                    <a href="#cerita">Cerita pelanggan</a>
+                    <a href="#harga">Harga</a>
+                </nav>
+
+                <div class="nav-cta">
+                    @if (Route::has('login'))
+                        @auth
+                            <a href="{{ url('/dashboard') }}" class="btn btn-primary">Buka dashboard</a>
+                        @else
+                            <a href="{{ route('login') }}" class="btn btn-ghost">Masuk</a>
+                            @if (Route::has('register'))
+                                <a href="{{ route('register') }}" class="btn btn-primary">Mulai gratis</a>
+                            @endif
+                        @endauth
+                    @endif
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!-- ===== Hero ===== -->
+            <section class="hero">
+                <div class="hero-glow"></div>
+                <div class="wrap">
+                    <span class="eyebrow"><span class="ping"></span> Modul Penjualan dari Salesflow ERP</span>
+
+                    <h1>Satu alur untuk <em>quotation</em>, pesanan, dan piutang pelanggan Anda</h1>
+
+                    <p class="lead">
+                        Dari penawaran harga sampai pembayaran masuk, tim sales Anda bekerja di satu tempat.
+                        Stok, pelanggan, dan invoice selalu sinkron — tanpa rekap manual di akhir bulan.
+                    </p>
+
+                    <div class="hero-actions">
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}" class="btn btn-primary">Coba modul penjualan</a>
+                        @endif
+                        <a href="#alur" class="btn btn-outline">Lihat cara kerjanya</a>
+                    </div>
+                    <p class="hero-note">Tidak perlu kartu kredit · Siap pakai dalam satu hari</p>
+
+                    <!-- Visual preview -->
+                    <div class="hero-visual">
+                        <div class="hero-visual-bar">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <div class="hero-visual-body">
+                            <div class="hv-sidebar">
+                                <div class="item active"><span class="ic"></span> Sales order</div>
+                                <div class="item"><span class="ic"></span> Pelanggan</div>
+                                <div class="item"><span class="ic"></span> Invoice</div>
+                                <div class="item"><span class="ic"></span> Inventory</div>
+                                <div class="item"><span class="ic"></span> Laporan</div>
+                            </div>
+                            <div class="hv-main">
+                                <div class="hv-row">
+                                    <h3>Pesanan minggu ini</h3>
+                                    <span class="hv-pill">+18% dari minggu lalu</span>
+                                </div>
+
+                                <div class="hv-card">
+                                    <div class="who">
+                                        <span class="hv-avatar"></span>
+                                        <div>
+                                            CV Mitra Abadi
+                                            <div class="hv-status">Menunggu pengiriman</div>
+                                        </div>
+                                    </div>
+                                    <span class="hv-amt">Rp 24.500.000</span>
+                                </div>
+                                <div class="hv-card">
+                                    <div class="who">
+                                        <span class="hv-avatar"></span>
+                                        <div>
+                                            Toko Sumber Jaya
+                                            <div class="hv-status">Invoice terkirim</div>
+                                        </div>
+                                    </div>
+                                    <span class="hv-amt">Rp 8.750.000</span>
+                                </div>
+                                <div class="hv-card">
+                                    <div class="who">
+                                        <span class="hv-avatar"></span>
+                                        <div>
+                                            PT Karya Sentosa
+                                            <div class="hv-status">Pembayaran lunas</div>
+                                        </div>
+                                    </div>
+                                    <span class="hv-amt">Rp 41.200.000</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== Trust strip ===== -->
+            <section class="trust">
+                <div class="wrap">
+                    <p>Dipercaya tim sales di berbagai industri</p>
+                    <div class="trust-grid">
+                        <span>Mitra Abadi</span>
+                        <span>Sumber Jaya</span>
+                        <span>Karya Sentosa</span>
+                        <span>Nusantara Niaga</span>
+                        <span>Berkah Mandiri</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== Features ===== -->
+            <section class="section" id="fitur">
+                <div class="wrap">
+                    <div class="section-head">
+                        <span class="tag">Fitur inti</span>
+                        <h2>Semua yang dibutuhkan tim penjualan, tanpa modul yang berceceran</h2>
+                        <p>Setiap bagian saling terhubung — saat satu transaksi dibuat, stok dan pembukuan ikut diperbarui secara otomatis.</p>
+                    </div>
+
+                    <div class="feature-grid">
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                            </div>
+                            <h3>Quotation ke Sales Order</h3>
+                            <p>Ubah penawaran jadi pesanan dengan satu klik, lengkap dengan riwayat negosiasi harga per pelanggan.</p>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
+                            </div>
+                            <h3>Stok yang selalu akurat</h3>
+                            <p>Inventory berkurang otomatis saat pengiriman dikonfirmasi, jadi tim sales tidak pernah menjanjikan stok kosong.</p>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            </div>
+                            <h3>Invoice dan piutang</h3>
+                            <p>Invoice terbit langsung dari pesanan, dengan pelacakan piutang otomatis sehingga tagihan jatuh tempo tidak terlewat.</p>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            </div>
+                            <h3>Riwayat pelanggan terpusat</h3>
+                            <p>Lihat seluruh transaksi, komunikasi, dan status pembayaran setiap pelanggan dalam satu halaman.</p>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>
+                            </div>
+                            <h3>Laporan penjualan real-time</h3>
+                            <p>Pantau performa tim, produk terlaris, dan tren penjualan tanpa menunggu rekap akhir bulan.</p>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            </div>
+                            <h3>Hak akses per peran</h3>
+                            <p>Atur siapa yang bisa membuat, menyetujui, atau hanya melihat transaksi — sesuai struktur tim Anda.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== Workflow ===== -->
+            <section class="section" id="alur" style="padding-top:0">
+                <div class="wrap">
+                    <div class="section-head">
+                        <span class="tag">Alur kerja</span>
+                        <h2>Dari penawaran sampai pembayaran lunas, dalam empat langkah</h2>
+                        <p>Tidak ada lagi salin-tempel data antar spreadsheet. Satu transaksi mengalir otomatis ke tahap berikutnya.</p>
+                    </div>
+
+                    <div class="flow-strip">
+                        <div class="flow-step">
+                            <span class="n">01</span>
+                            <h4>Buat quotation</h4>
+                            <p>Susun penawaran harga dari katalog produk yang sudah tersinkron dengan stok.</p>
+                            <span class="flow-arrow">→</span>
+                        </div>
+                        <div class="flow-step">
+                            <span class="n">02</span>
+                            <h4>Konfirmasi pesanan</h4>
+                            <p>Pelanggan setuju, quotation berubah jadi sales order dan stok otomatis dipesan.</p>
+                            <span class="flow-arrow">→</span>
+                        </div>
+                        <div class="flow-step">
+                            <span class="n">03</span>
+                            <h4>Kirim dan tagih</h4>
+                            <p>Delivery order dan invoice terbit otomatis begitu barang siap dikirim.</p>
+                            <span class="flow-arrow">→</span>
+                        </div>
+                        <div class="flow-step">
+                            <span class="n">04</span>
+                            <h4>Pantau pembayaran</h4>
+                            <p>Status piutang terupdate otomatis saat pembayaran pelanggan tercatat.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== Stats ===== -->
+            <section class="section" style="padding-top:0">
+                <div class="wrap">
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="num">2 jam</div>
+                            <div class="label">rata-rata waktu dari quotation ke order terkonfirmasi</div>
+                        </div>
+                        <div class="stat">
+                            <div class="num">99,2%</div>
+                            <div class="label">akurasi stok dibanding pencatatan manual</div>
+                        </div>
+                        <div class="stat">
+                            <div class="num">35%</div>
+                            <div class="label">lebih cepat penagihan piutang</div>
+                        </div>
+                        <div class="stat">
+                            <div class="num">1 hari</div>
+                            <div class="label">waktu rata-rata tim mulai terbiasa memakai sistem</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== Testimonial ===== -->
+            <section class="section" id="cerita" style="padding-top:0">
+                <div class="wrap">
+                    <div class="testimonial">
+                        <div>
+                            <blockquote>
+                                "Tim sales kami tidak lagi menunggu konfirmasi stok dari gudang lewat WhatsApp.
+                                Semua sudah terlihat langsung saat membuat quotation."
+                            </blockquote>
+                            <cite><b>Dewi Anggraini</b> — Sales Manager, distribusi consumer goods</cite>
+                        </div>
+                        <div class="hv-avatar" style="width:64px;height:64px;border-radius:16px"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== CTA banner ===== -->
+            <section class="section" style="padding-top:0" id="harga">
+                <div class="wrap">
+                    <div class="cta-banner">
+                        <h2>Siap merapikan alur penjualan tim Anda?</h2>
+                        <p>Mulai dengan satu branch, tambahkan modul lain kapan saja Anda siap.</p>
+                        <div class="hero-actions">
+                            @if (Route::has('register'))
+                                <a href="{{ route('register') }}" class="btn btn-primary">Mulai gratis</a>
+                            @endif
+                            <a href="#fitur" class="btn btn-outline">Pelajari fitur lengkap</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- ===== Footer ===== -->
+        <footer>
+            <div class="wrap">
+                <div class="footer-grid">
+                    <div class="footer-col">
+                        <div class="brand-mark" style="margin-bottom:14px">
+                            <span class="dot">S</span> Salesflow
+                        </div>
+                        <p style="font-size:13px;color:var(--ink-faint);max-width:240px;line-height:1.6">
+                            Modul penjualan dari Salesflow ERP — bagian dari sistem bisnis yang mengelola finance, supply chain, dan website Anda.
+                        </p>
+                    </div>
+                    <div class="footer-col">
+                        <h5>Produk</h5>
+                        <a href="#fitur">Fitur</a>
+                        <a href="#alur">Alur kerja</a>
+                        <a href="#harga">Harga</a>
+                    </div>
+                    <div class="footer-col">
+                        <h5>Modul lain</h5>
+                        <a href="#">Manufaktur</a>
+                        <a href="#">Akuntansi</a>
+                        <a href="#">eCommerce</a>
+                    </div>
+                    <div class="footer-col">
+                        <h5>Perusahaan</h5>
+                        <a href="#">Tentang kami</a>
+                        <a href="#">Kontak</a>
+                        <a href="#">Bantuan</a>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <span>&copy; {{ date('Y') }} Salesflow. Dibangun di atas Laravel v{{ Illuminate\Foundation\Application::VERSION }}.</span>
+                    <span>Modul Penjualan — Salesflow ERP</span>
+                </div>
+            </div>
+        </footer>
+
     </body>
 </html>
